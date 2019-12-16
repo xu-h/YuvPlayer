@@ -47,10 +47,11 @@ private:
     Ui::Player *ui;
 
     QFile *yuvFile;
-    QImage *yuv[3];
+    uchar* yuvBuf[3];
     QImage *rgb;
     int width;
     int height;
+    size_t size;
 
     QLabel *imageLabel;
     QScrollArea *scrollArea;

@@ -15,10 +15,12 @@ Player::Player(QWidget *parent)
 
     width = 1920;
     height = 1080;
+    size = static_cast<size_t>(width * height);
 
-    yuv[0] = new QImage(width, height, QImage::Format_Grayscale8);
-    yuv[1] = new QImage(width >> 1, height >> 1, QImage::Format_Grayscale8);
-    yuv[2] = new QImage(width >> 1, height >> 1, QImage::Format_Grayscale8);
+    yuvBuf[0] = reinterpret_cast<uchar *>(malloc(size));
+    yuvBuf[1] = reinterpret_cast<uchar *>(malloc(size >> 2));
+    yuvBuf[2] = reinterpret_cast<uchar *>(malloc(size >> 2));
+
     rgb = new QImage(width, height, QImage::Format_RGB888);
 
     imageLabel = new QLabel();
@@ -56,15 +58,9 @@ void Player::openYuvFile()
 
     yuvFile = new QFile(fileName);
     yuvFile->open(QIODevice::ReadOnly);
-    yuvFile->read(reinterpret_cast<char *>(yuv[0]->bits()), width * height);
-    yuvFile->read(reinterpret_cast<char *>(yuv[1]->bits()), (width * height) >> 2);
-    yuvFile->read(reinterpret_cast<char *>(yuv[2]->bits()), (width * height) >> 2);
-
-    uchar *yuvBuf[3] = {
-        yuv[0]->bits(),
-        yuv[1]->bits(),
-        yuv[2]->bits()
-    };
+    yuvFile->read(reinterpret_cast<char *>(yuvBuf[0]), static_cast<qint64>(size));
+    yuvFile->read(reinterpret_cast<char *>(yuvBuf[1]), size >> 2);
+    yuvFile->read(reinterpret_cast<char *>(yuvBuf[2]), size >> 2);
 
     // TODO only bit depth smaller than 14 is supported
     ColorSpaceCvt type = YUV2RGB_BT709_FULL;
@@ -75,29 +71,24 @@ void Player::openYuvFile()
     if (type == YUV2RGB_BT709_FULL || type == YUV2RGB_BT601_FULL || type == YUV2RGB_BT2020_FULL) {
         lumaOffset = 0;
     }
-    qDebug() << yuv[0]->bytesPerLine() << yuv[1]->bytesPerLine() << rgb[0].bytesPerLine();
 
-    int widthC = width / 2;
+    int widthC = width >> 1;
 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             int pos = i * width + j;
-            int posC = (i / 2) * widthC + (j / 2);
-            int y = yuv[0]->bits()[pos] - lumaOffset;
-            int u = yuv[1]->bits()[posC] - chromaOffset;
-            int v = yuv[2]->bits()[posC] - chromaOffset;
-
-            //int y = 0 + yuv[0]->scanLine(i)[j] - lumaOffset;
-            //int u = 0 + yuv[1]->scanLine(i >> 1)[(j + 1) >> 1] - chromaOffset;
-            //int v = 0 + yuv[2]->scanLine(i >> 1)[(j + 1) >> 1] - chromaOffset;
+            int posC = (i >> 1) * widthC + (j >> 1);
+            int y = (yuvBuf[0][pos] - lumaOffset);
+            int u = yuvBuf[1][posC] - chromaOffset;
+            int v = yuvBuf[2][posC] - chromaOffset;
 
             int r = (cvt[0] * y +            + cvt[1] * v) >> (bitdepth + 8);
             int g = (cvt[0] * y + cvt[2] * u + cvt[3] * v) >> (bitdepth + 8);
             int b = (cvt[0] * y + cvt[4] * u             ) >> (bitdepth + 8);
 
-            // r = r < 0 ? 0: r > 255 ? 255: r;
-            // g = g < 0 ? 0: g > 255 ? 255: g;
-            // b = b < 0 ? 0: b > 255 ? 255: b;
+            r = r < 0 ? 0: r > 255 ? 255: r;
+            g = g < 0 ? 0: g > 255 ? 255: g;
+            b = b < 0 ? 0: b > 255 ? 255: b;
 
             rgb->setPixel(j, i, qRgb(r, g, b));
         }
