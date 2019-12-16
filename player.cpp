@@ -48,9 +48,8 @@ void Player::openYuvFile()
     QString fileName = QFileDialog::getOpenFileName(this, tr("open YUV"), QString("F:/seq/vvc"));
     ui->seqNameLabel->setText(fileName);
 
-
     seq = new Sequence(fileName);
     seq->config(width, height, 8);
 
-    rgb = seq->getFrame();
+    rgb = seq->getFrame(YUV2RGB_BT709_FULL);
 }

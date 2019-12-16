@@ -6,7 +6,7 @@
 #include <QImage>
 
 
-enum ColorSpaceCvt {
+typedef enum ColorCvtType {
     YUV2RGB_BT709_LIMIT,
     YUV2RGB_BT709_FULL,
     YUV2RGB_BT601_LIMIT,
@@ -14,7 +14,7 @@ enum ColorSpaceCvt {
     YUV2RGB_BT2020_LIMIT,
     YUV2RGB_BT2020_FULL,
     YUV2RGB_TYPE_NUM
-};
+} ColorCvtType;
 
 const int yuv2rgb[YUV2RGB_TYPE_NUM][12] = {
     {76309, 117489, -13975, -34925, 138438}, // BT709_LimitedRange
@@ -31,7 +31,7 @@ public:
     Sequence(QString filename);
     ~Sequence();
     void config(int width, int height, int depth);
-    QImage* getFrame();
+    QImage* getFrame(ColorCvtType type);
 
 private:
     QFile* f;

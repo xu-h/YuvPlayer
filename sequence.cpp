@@ -58,19 +58,19 @@ void Sequence::readFrame()
     f->read(reinterpret_cast<char *>(m_yuv[2]), m_sizeC);
 }
 
-QImage* Sequence::getFrame()
+QImage* Sequence::getFrame(ColorCvtType type)
 {
     readFrame();
 
     // TODO only bit depth smaller than 14 is supported
-    ColorSpaceCvt type = YUV2RGB_BT709_FULL;
     const int* cvt = yuv2rgb[type];
-    int bitdepth = 8;
-    int lumaOffset = 16 << (bitdepth - 8);
-    int chromaOffset = 128 << (bitdepth - 8);
+    int lumaOffset = 16 << (m_depth - 8);
+    int chromaOffset = 128 << (m_depth - 8);
+
     if (type == YUV2RGB_BT709_FULL || type == YUV2RGB_BT601_FULL || type == YUV2RGB_BT2020_FULL) {
         lumaOffset = 0;
     }
+    int shift = m_depth + 8;
 
     for (int i = 0; i < m_height; i++) {
         for (int j = 0; j < m_width; j++) {
@@ -80,9 +80,9 @@ QImage* Sequence::getFrame()
             int u = m_yuv[1][posC] - chromaOffset;
             int v = m_yuv[2][posC] - chromaOffset;
 
-            int r = (cvt[0] * y +            + cvt[1] * v) >> (bitdepth + 8);
-            int g = (cvt[0] * y + cvt[2] * u + cvt[3] * v) >> (bitdepth + 8);
-            int b = (cvt[0] * y + cvt[4] * u             ) >> (bitdepth + 8);
+            int r = (cvt[0] * y +            + cvt[1] * v) >> shift;
+            int g = (cvt[0] * y + cvt[2] * u + cvt[3] * v) >> shift;
+            int b = (cvt[0] * y + cvt[4] * u             ) >> shift;
 
             r = r < 0 ? 0: r > 255 ? 255: r;
             g = g < 0 ? 0: g > 255 ? 255: g;
