@@ -14,7 +14,7 @@ Player::Player(QWidget *parent)
     ui->setupUi(this);
 
     imageLabel = new QLabel();
-    imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+//    imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
     ui->scrollArea->setWidget(imageLabel);
     ui->scrollArea->setBackgroundRole(QPalette::Dark);
