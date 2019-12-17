@@ -33,8 +33,6 @@ private:
     Sequence *seq;
 
     QImage *rgb;
-    int width;
-    int height;
 
     QLabel *imageLabel;
     QScrollArea *scrollArea;

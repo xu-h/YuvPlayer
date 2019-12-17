@@ -13,9 +13,6 @@ Player::Player(QWidget *parent)
 {
     ui->setupUi(this);
 
-    width = 1920;
-    height = 1080;
-
     imageLabel = new QLabel();
     imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
@@ -49,7 +46,6 @@ void Player::openYuvFile()
     ui->seqNameLabel->setText(fileName);
 
     seq = new Sequence(fileName);
-    seq->config(width, height, 8);
 
     rgb = seq->getFrame(YUV2RGB_BT709_FULL);
 }

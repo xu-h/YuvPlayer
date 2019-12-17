@@ -1,9 +1,17 @@
 #include "sequence.h"
 
+#include <QtDebug>
+
 Sequence::Sequence(QString filename)
 {
     f = new QFile(filename);
     f->open(QIODevice::ReadOnly);
+
+    memset(m_yuv, 0, sizeof(m_yuv));
+    m_rgb = NULL;
+
+    QString name = filename.section('/', -1).section('.', 0, 0);
+    parseName(name);
 }
 
 Sequence::~Sequence()
@@ -29,26 +37,66 @@ Sequence::~Sequence()
 
 void Sequence::parseName(QString name)
 {
+    QStringList info = name.split('_');
 
+    int width = 0, height = 0, depth = 8;
+    bool ok;
+    // TODO parse chroma format
+    for (int i = 0; i < info.size(); i++) {
+        QString attr = info.at(i);
+        if (attr.contains('x')) {
+            QStringList size = attr.split('x');
+            if (size.size() == 2) {
+                width = size.at(0).toInt(&ok);
+                if (!ok) {
+                    width = 0;
+                }
+                height = size.at(1).toInt(&ok);
+                if (!ok) {
+                    height = 0;
+                }
+            }
+        } else if (attr.endsWith("bit")) {
+            depth = attr.left(attr.indexOf("bit")).toUInt(&ok);
+            if (!ok) {
+                depth = 8;
+            }
+        }
+    }
+
+    config(width, height, depth);
 }
 
 void Sequence::config(int width, int height, int depth)
 {
-    // TODO support other chroma format and depth
     m_depth = depth;
+    int pixBytes = (depth + 15) >> 4;
+//    qDebug() << "pix byte " << pixBytes << endl;
+    qDebug() << "seq init: width" << width << "height" << height << "depth" << depth << endl;
 
-    m_width = width;
-    m_height = height;
-    m_widthC = width >> 1;
-    m_heightC = height >> 1;
-    m_size = width * height;
-    m_sizeC = m_size >> 2;
+    if (width > 0 && height > 0) {
+    // TODO support other chroma format and depth
+        m_width = width;
+        m_height = height;
+        m_widthC = width >> 1;
+        m_heightC = height >> 1;
+        m_size = width * height * pixBytes;
+        m_sizeC = m_size >> 2;
 
-    m_yuv[0] = reinterpret_cast<uchar *>(malloc(static_cast<size_t>(m_size)));
-    m_yuv[1] = reinterpret_cast<uchar *>(malloc(static_cast<size_t>(m_sizeC)));
-    m_yuv[2] = reinterpret_cast<uchar *>(malloc(static_cast<size_t>(m_sizeC)));
+        for (int i = 0; i < 3; i++) {
+            if (m_yuv[i]) {
+                free(m_yuv[i]);
+            }
+        }
+        m_yuv[0] = reinterpret_cast<uchar *>(malloc(static_cast<size_t>(m_size)));
+        m_yuv[1] = reinterpret_cast<uchar *>(malloc(static_cast<size_t>(m_sizeC)));
+        m_yuv[2] = reinterpret_cast<uchar *>(malloc(static_cast<size_t>(m_sizeC)));
 
-    m_rgb = new QImage(width, height, QImage::Format_RGB888);
+        if (m_rgb) {
+            delete m_rgb;
+        }
+        m_rgb = new QImage(width, height, QImage::Format_RGB888);
+    }
 }
 
 void Sequence::readFrame()
