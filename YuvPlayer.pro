@@ -18,10 +18,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     player.cpp \
+    scrollarea.cpp \
     sequence.cpp
 
 HEADERS += \
     player.h \
+    scrollarea.h \
     sequence.h
 
 FORMS += \

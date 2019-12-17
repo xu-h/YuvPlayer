@@ -13,3 +13,4 @@ TO-DO:
 - [ ] compare to sequence
 - [ ] draw LCU border
 - [ ] display pixel value
+

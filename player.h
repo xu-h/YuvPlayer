@@ -35,7 +35,6 @@ private:
     QImage *rgb;
 
     QLabel *imageLabel;
-    QScrollArea *scrollArea;
     void openYuvFile();
 };
 #endif // PLAYER_H

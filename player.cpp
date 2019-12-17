@@ -13,11 +13,8 @@ Player::Player(QWidget *parent)
 {
     ui->setupUi(this);
 
-    imageLabel = new QLabel();
+    ui->scrollArea->init();
 //    imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-
-    ui->scrollArea->setWidget(imageLabel);
-    ui->scrollArea->setBackgroundRole(QPalette::Dark);
 }
 
 Player::~Player()
@@ -32,12 +29,12 @@ Player::~Player()
 void Player::on_OpenButton_clicked()
 {
     openYuvFile();
-    imageLabel->setPixmap(QPixmap::fromImage(*rgb));
+    ui->scrollArea->display(rgb);
 }
 
 void Player::on_updateButton_clicked()
 {
-    imageLabel->setPixmap(QPixmap::fromImage(*rgb));
+    ui->scrollArea->display(rgb);
 }
 
 void Player::openYuvFile()
