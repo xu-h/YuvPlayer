@@ -33,6 +33,12 @@ public:
     void config(int width, int height, int depth);
     QImage* getFrame(ColorCvtType type);
 
+
+
+    int getWidth() const;
+    int getHeight() const;
+    int getDepth() const;
+
 private:
     QFile* f;
 

@@ -29,6 +29,11 @@ Player::~Player()
 void Player::on_OpenButton_clicked()
 {
     openYuvFile();
+
+    ui->widthEdit->setText(QString::number(seq->getWidth()));
+    ui->heightEdit->setText(QString::number(seq->getHeight()));
+    ui->depthBox->setValue(seq->getDepth());
+
     ui->scrollArea->display(rgb);
 }
 

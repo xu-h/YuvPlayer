@@ -142,3 +142,18 @@ QImage* Sequence::getFrame(ColorCvtType type)
 
     return m_rgb;
 }
+
+int Sequence::getWidth() const
+{
+    return m_width;
+}
+
+int Sequence::getHeight() const
+{
+    return m_height;
+}
+
+int Sequence::getDepth() const
+{
+    return m_depth;
+}
