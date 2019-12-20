@@ -34,6 +34,7 @@ void Player::on_OpenButton_clicked()
     ui->heightEdit->setText(QString::number(seq->getHeight()));
     ui->depthBox->setValue(seq->getDepth());
 
+    rgb = seq->nextFrame();
     ui->scrollArea->display(rgb);
 }
 
@@ -48,6 +49,16 @@ void Player::openYuvFile()
     ui->seqNameLabel->setText(fileName);
 
     seq = new Sequence(fileName);
+}
 
-    rgb = seq->getFrame(YUV2RGB_BT709_FULL);
+void Player::on_nextButton_clicked()
+{
+    rgb = seq->nextFrame();
+    ui->scrollArea->display(rgb);
+}
+
+void Player::on_prevButton_clicked()
+{
+    rgb = seq->prevFrame();
+    ui->scrollArea->display(rgb);
 }

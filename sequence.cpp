@@ -10,6 +10,8 @@ Sequence::Sequence(QString filename)
     memset(m_yuv, 0, sizeof(m_yuv));
     m_rgb = NULL;
 
+    m_colorType = YUV2RGB_BT709_FULL;
+
     QString name = filename.section('/', -1).section('.', 0, 0);
     parseName(name);
 }
@@ -80,15 +82,16 @@ void Sequence::config(int width, int height, int depth)
         m_height = height;
         m_widthC = width >> 1;
         m_heightC = height >> 1;
-        m_size = width * height * pixBytes;
-        m_sizeC = m_size >> 2;
+        m_sizeL = width * height * pixBytes;
+        m_sizeC = m_sizeL >> 2;
+        m_size = m_sizeL + m_sizeC + m_sizeC;
 
         for (int i = 0; i < 3; i++) {
             if (m_yuv[i]) {
                 free(m_yuv[i]);
             }
         }
-        m_yuv[0] = reinterpret_cast<uchar *>(malloc(static_cast<size_t>(m_size)));
+        m_yuv[0] = reinterpret_cast<uchar *>(malloc(static_cast<size_t>(m_sizeL)));
         m_yuv[1] = reinterpret_cast<uchar *>(malloc(static_cast<size_t>(m_sizeC)));
         m_yuv[2] = reinterpret_cast<uchar *>(malloc(static_cast<size_t>(m_sizeC)));
 
@@ -99,23 +102,14 @@ void Sequence::config(int width, int height, int depth)
     }
 }
 
-void Sequence::readFrame()
+void Sequence::convertRGB()
 {
-    f->read(reinterpret_cast<char *>(m_yuv[0]), m_size);
-    f->read(reinterpret_cast<char *>(m_yuv[1]), m_sizeC);
-    f->read(reinterpret_cast<char *>(m_yuv[2]), m_sizeC);
-}
-
-QImage* Sequence::getFrame(ColorCvtType type)
-{
-    readFrame();
-
     // TODO only bit depth smaller than 14 is supported
-    const int* cvt = yuv2rgb[type];
+    const int* cvt = yuv2rgb[m_colorType];
     int lumaOffset = 16 << (m_depth - 8);
     int chromaOffset = 128 << (m_depth - 8);
 
-    if (type == YUV2RGB_BT709_FULL || type == YUV2RGB_BT601_FULL || type == YUV2RGB_BT2020_FULL) {
+    if (m_colorType == YUV2RGB_BT709_FULL || m_colorType == YUV2RGB_BT601_FULL || m_colorType == YUV2RGB_BT2020_FULL) {
         lumaOffset = 0;
     }
     int shift = m_depth + 8;
@@ -139,6 +133,28 @@ QImage* Sequence::getFrame(ColorCvtType type)
             m_rgb->setPixel(j, i, qRgb(r, g, b));
         }
     }
+}
+
+
+QImage* Sequence::nextFrame()
+{
+    f->read(reinterpret_cast<char *>(m_yuv[0]), m_sizeL);
+    f->read(reinterpret_cast<char *>(m_yuv[1]), m_sizeC);
+    f->read(reinterpret_cast<char *>(m_yuv[2]), m_sizeC);
+
+    convertRGB();
+
+    return m_rgb;
+}
+
+QImage* Sequence::prevFrame()
+{
+    f->seek(f->pos() - m_size * 2);
+    f->read(reinterpret_cast<char *>(m_yuv[0]), m_sizeL);
+    f->read(reinterpret_cast<char *>(m_yuv[1]), m_sizeC);
+    f->read(reinterpret_cast<char *>(m_yuv[2]), m_sizeC);
+
+    convertRGB();
 
     return m_rgb;
 }

@@ -183,42 +183,42 @@
         <item>
          <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0">
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="playButton">
             <property name="text">
              <string>play</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QPushButton" name="pushButton_6">
+           <widget class="QPushButton" name="stopButton">
             <property name="text">
              <string>stop</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="nextButton">
             <property name="text">
              <string>next frame</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QPushButton" name="pushButton_3">
+           <widget class="QPushButton" name="prevButton">
             <property name="text">
              <string>previous frame</string>
             </property>
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QPushButton" name="pushButton_5">
+           <widget class="QPushButton" name="gotoButton">
             <property name="text">
              <string>goto frame</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLineEdit" name="lineEdit_2"/>
+           <widget class="QLineEdit" name="gotoEdit"/>
           </item>
           <item row="3" column="0" colspan="2">
            <widget class="QLabel" name="label_4">

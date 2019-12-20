@@ -24,8 +24,10 @@ public:
 
 private slots:
     void on_updateButton_clicked();
-
     void on_OpenButton_clicked();
+    void on_nextButton_clicked();
+
+    void on_prevButton_clicked();
 
 private:
     Ui::Player *ui;

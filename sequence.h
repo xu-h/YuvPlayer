@@ -31,9 +31,8 @@ public:
     Sequence(QString filename);
     ~Sequence();
     void config(int width, int height, int depth);
-    QImage* getFrame(ColorCvtType type);
-
-
+    QImage* nextFrame();
+    QImage* prevFrame();
 
     int getWidth() const;
     int getHeight() const;
@@ -46,16 +45,19 @@ private:
     int m_height;
     int m_widthC;
     int m_heightC;
-    int m_size;
-    int m_sizeC;
+    int m_size;     // frame byte size
+    int m_sizeL;    // luma byte size
+    int m_sizeC;    // chroma byte size
 
     int m_depth;
+
+    ColorCvtType m_colorType;
 
     uchar* m_yuv[3];
     QImage* m_rgb;
 
     void parseName(QString name);
-    void readFrame();
+    void convertRGB();
 };
 
 #endif // SEQUENCE_H
