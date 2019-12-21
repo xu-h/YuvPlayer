@@ -32,6 +32,8 @@ private slots:
     void on_heightBox_valueChanged(int height);
     void on_widthBox_valueChanged(int width);
 
+    void on_depthBox_valueChanged(int arg1);
+
 private:
     Ui::Player *ui;
 

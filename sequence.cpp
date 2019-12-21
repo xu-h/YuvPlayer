@@ -71,13 +71,11 @@ void Sequence::parseName(QString name)
 
 SeqError Sequence::config(int width, int height, int depth)
 {
-    m_depth = depth;
-    int pixBytes = (depth + 15) >> 4;
-//    qDebug() << "pix byte " << pixBytes << endl;
-    qDebug() << "seq init: width" << width << "height" << height << "depth" << depth << endl;
-
     if (width > 0 && height > 0) {
-    // TODO support other chroma format and depth
+        qDebug() << "seq init: width" << width << "height" << height << "depth" << depth << endl;
+        // TODO support other chroma format
+        m_depth = depth;
+        int pixBytes = (depth + 7) >> 3;
         m_width = width;
         m_height = height;
         m_widthC = width >> 1;
@@ -108,6 +106,9 @@ SeqError Sequence::config(int width, int height, int depth)
         {
             return SEQ_INVALID_FILE_SIZE;
         }
+        if (depth < 8 || depth > 16) {
+            return SEQ_INVALID_DEPTH;
+        }
     }
     return SEQ_SUCCESS;
 }
@@ -124,23 +125,48 @@ void Sequence::convertRGB()
     }
     int shift = m_depth + 8;
 
-    for (int i = 0; i < m_height; i++) {
-        for (int j = 0; j < m_width; j++) {
-            int pos = i * m_width + j;
-            int posC = (i >> 1) * m_widthC + (j >> 1);
-            int y = m_yuv[0][pos] - lumaOffset;
-            int u = m_yuv[1][posC] - chromaOffset;
-            int v = m_yuv[2][posC] - chromaOffset;
+    if (m_depth <= 8) {
+        for (int i = 0; i < m_height; i++) {
+            for (int j = 0; j < m_width; j++) {
+                int pos = i * m_width + j;
+                int posC = (i >> 1) * m_widthC + (j >> 1);
+                int y = m_yuv[0][pos] - lumaOffset;
+                int u = m_yuv[1][posC] - chromaOffset;
+                int v = m_yuv[2][posC] - chromaOffset;
 
-            int r = (cvt[0] * y +            + cvt[1] * v) >> shift;
-            int g = (cvt[0] * y + cvt[2] * u + cvt[3] * v) >> shift;
-            int b = (cvt[0] * y + cvt[4] * u             ) >> shift;
+                int r = (cvt[0] * y +            + cvt[1] * v) >> shift;
+                int g = (cvt[0] * y + cvt[2] * u + cvt[3] * v) >> shift;
+                int b = (cvt[0] * y + cvt[4] * u             ) >> shift;
 
-            r = r < 0 ? 0: r > 255 ? 255: r;
-            g = g < 0 ? 0: g > 255 ? 255: g;
-            b = b < 0 ? 0: b > 255 ? 255: b;
+                r = r < 0 ? 0: r > 255 ? 255: r;
+                g = g < 0 ? 0: g > 255 ? 255: g;
+                b = b < 0 ? 0: b > 255 ? 255: b;
 
-            m_rgb->setPixel(j, i, qRgb(r, g, b));
+                m_rgb->setPixel(j, i, qRgb(r, g, b));
+            }
+        }
+    } else if (m_depth <= 16) {
+        qint16 *yBuf = reinterpret_cast<qint16 *>(m_yuv[0]);
+        qint16 *uBuf = reinterpret_cast<qint16 *>(m_yuv[1]);
+        qint16 *vBuf = reinterpret_cast<qint16 *>(m_yuv[2]);
+        for (int i = 0; i < m_height; i++) {
+            for (int j = 0; j < m_width; j++) {
+                int pos = i * m_width + j;
+                int posC = (i >> 1) * m_widthC + (j >> 1);
+                int y = yBuf[pos] - lumaOffset;
+                int u = uBuf[posC] - chromaOffset;
+                int v = vBuf[posC] - chromaOffset;
+
+                int r = (cvt[0] * y +            + cvt[1] * v) >> shift;
+                int g = (cvt[0] * y + cvt[2] * u + cvt[3] * v) >> shift;
+                int b = (cvt[0] * y + cvt[4] * u             ) >> shift;
+
+                r = r < 0 ? 0: r > 255 ? 255: r;
+                g = g < 0 ? 0: g > 255 ? 255: g;
+                b = b < 0 ? 0: b > 255 ? 255: b;
+
+                m_rgb->setPixel(j, i, qRgb(r, g, b));
+            }
         }
     }
 }
@@ -206,6 +232,6 @@ int Sequence::getDepth() const
 SeqError Sequence::setDepth(int depth)
 {
     m_depth = depth;
-    return SEQ_SUCCESS;
+    return config(m_width, m_height, m_depth);
 }
 

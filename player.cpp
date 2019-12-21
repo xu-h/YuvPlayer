@@ -92,3 +92,18 @@ void Player::on_widthBox_valueChanged(int width)
         ui->scrollArea->display(rgb);
     }
 }
+
+void Player::on_depthBox_valueChanged(int depth)
+{
+    if (depth != seq->getDepth()) {
+        qDebug() << "set depth from" << seq->getDepth() << "to" << depth << endl;
+        SeqError error = seq->setDepth(depth);
+        if (error == SEQ_INVALID_DEPTH) {
+            ui->logText->append(QString("Only 8bit ~ 16bit are supported."));
+        } else {
+            ui->logText->append(QString("Depth changed."));
+        }
+        rgb = seq->nextFrame();
+        ui->scrollArea->display(rgb);
+    }
+}

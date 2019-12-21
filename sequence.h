@@ -27,7 +27,8 @@ const int yuv2rgb[YUV2RGB_TYPE_NUM][12] = {
 
 typedef enum SeqError {
     SEQ_SUCCESS,
-    SEQ_INVALID_FILE_SIZE
+    SEQ_INVALID_FILE_SIZE,
+    SEQ_INVALID_DEPTH
 } SeqError;
 
 class Sequence
