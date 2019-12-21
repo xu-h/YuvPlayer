@@ -90,11 +90,6 @@ SeqError Sequence::config(int width, int height, int depth)
         m_maxFrame = static_cast<int>(f->size() / m_size);
         f->seek(0);
 
-        if (f->size() > m_size * m_maxFrame)
-        {
-            return SEQ_INVALID_FILE_SIZE;
-        }
-
         for (int i = 0; i < 3; i++) {
             if (m_yuv[i]) {
                 free(m_yuv[i]);
@@ -108,6 +103,11 @@ SeqError Sequence::config(int width, int height, int depth)
             delete m_rgb;
         }
         m_rgb = new QImage(width, height, QImage::Format_RGB888);
+
+        if (f->size() > m_size * m_maxFrame)
+        {
+            return SEQ_INVALID_FILE_SIZE;
+        }
     }
     return SEQ_SUCCESS;
 }
