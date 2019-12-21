@@ -30,8 +30,8 @@ void Player::on_OpenButton_clicked()
 {
     openYuvFile();
 
-    ui->widthEdit->setText(QString::number(seq->getWidth()));
-    ui->heightEdit->setText(QString::number(seq->getHeight()));
+    ui->widthBox->setValue(seq->getWidth());
+    ui->heightBox->setValue(seq->getHeight());
     ui->depthBox->setValue(seq->getDepth());
 
     rgb = seq->nextFrame();
@@ -61,4 +61,34 @@ void Player::on_prevButton_clicked()
 {
     rgb = seq->prevFrame();
     ui->scrollArea->display(rgb);
+}
+
+void Player::on_heightBox_valueChanged(int height)
+{
+    if (height != seq->getHeight()) {
+        qDebug() << "set height from" << seq->getHeight() << "to" << height << endl;
+        SeqError error = seq->setWidth(height);
+        if (error == SEQ_INVALID_FILE_SIZE) {
+            ui->logText->append(QString("The file size is not divisible by the number of bytes per frame."));
+        } else {
+            ui->logText->append(QString("Height changed."));
+        }
+        rgb = seq->nextFrame();
+        ui->scrollArea->display(rgb);
+    }
+}
+
+void Player::on_widthBox_valueChanged(int width)
+{
+    if (width != seq->getWidth()) {
+        qDebug() << "set width from" << seq->getWidth() << "to" << width << endl;
+        SeqError error = seq->setWidth(width);
+        if (error == SEQ_INVALID_FILE_SIZE) {
+            ui->logText->append(QString("The file size is not divisible by the number of bytes per frame."));
+        } else {
+            ui->logText->append(QString("Width changed."));
+        }
+        rgb = seq->nextFrame();
+        ui->scrollArea->display(rgb);
+    }
 }

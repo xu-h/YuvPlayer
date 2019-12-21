@@ -25,34 +25,48 @@ const int yuv2rgb[YUV2RGB_TYPE_NUM][12] = {
     {65536,  96638, -10783, -37444, 123299}  // BT2020_FullRange
 };
 
+typedef enum SeqError {
+    SEQ_SUCCESS,
+    SEQ_INVALID_FILE_SIZE
+} SeqError;
+
 class Sequence
 {
 public:
     Sequence(QString filename);
     ~Sequence();
-    void config(int width, int height, int depth);
+    SeqError config(int width, int height, int depth);
+    QImage* updateFrame();
     QImage* nextFrame();
     QImage* prevFrame();
 
-    int getWidth() const;
-    int getHeight() const;
+    int  getWidth() const;
+    SeqError setWidth(int width);
+    int  getHeight() const;
+    SeqError setHeight(int height);
     int getDepth() const;
+    SeqError setDepth(int depth);
 
 private:
-    QFile* f;
-
+    // base info
     int m_width;
     int m_height;
+    int m_depth;
+    ColorCvtType m_colorType;
+
+    // derive info
     int m_widthC;
     int m_heightC;
     int m_size;     // frame byte size
     int m_sizeL;    // luma byte size
     int m_sizeC;    // chroma byte size
 
-    int m_depth;
+    // control
+    int m_curFrame;
+    int m_maxFrame;
 
-    ColorCvtType m_colorType;
-
+    // buffer
+    QFile* f;
     uchar* m_yuv[3];
     QImage* m_rgb;
 

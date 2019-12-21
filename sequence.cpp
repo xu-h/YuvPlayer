@@ -69,7 +69,7 @@ void Sequence::parseName(QString name)
     config(width, height, depth);
 }
 
-void Sequence::config(int width, int height, int depth)
+SeqError Sequence::config(int width, int height, int depth)
 {
     m_depth = depth;
     int pixBytes = (depth + 15) >> 4;
@@ -86,6 +86,15 @@ void Sequence::config(int width, int height, int depth)
         m_sizeC = m_sizeL >> 2;
         m_size = m_sizeL + m_sizeC + m_sizeC;
 
+        m_curFrame = 0;
+        m_maxFrame = static_cast<int>(f->size() / m_size);
+        f->seek(0);
+
+        if (f->size() > m_size * m_maxFrame)
+        {
+            return SEQ_INVALID_FILE_SIZE;
+        }
+
         for (int i = 0; i < 3; i++) {
             if (m_yuv[i]) {
                 free(m_yuv[i]);
@@ -100,6 +109,7 @@ void Sequence::config(int width, int height, int depth)
         }
         m_rgb = new QImage(width, height, QImage::Format_RGB888);
     }
+    return SEQ_SUCCESS;
 }
 
 void Sequence::convertRGB()
@@ -135,6 +145,13 @@ void Sequence::convertRGB()
     }
 }
 
+QImage* Sequence::updateFrame()
+{
+    convertRGB();
+
+    return m_rgb;
+}
+
 
 QImage* Sequence::nextFrame()
 {
@@ -164,12 +181,31 @@ int Sequence::getWidth() const
     return m_width;
 }
 
+SeqError Sequence::setWidth(int width)
+{
+    m_width = width;
+    return config(m_width, m_height, m_depth);
+}
+
 int Sequence::getHeight() const
 {
     return m_height;
+}
+
+SeqError Sequence::setHeight(int height)
+{
+    m_height = height;
+    return config(m_width, m_height, m_depth);
 }
 
 int Sequence::getDepth() const
 {
     return m_depth;
 }
+
+SeqError Sequence::setDepth(int depth)
+{
+    m_depth = depth;
+    return SEQ_SUCCESS;
+}
+

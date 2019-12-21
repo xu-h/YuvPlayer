@@ -43,7 +43,7 @@
       <x>10</x>
       <y>10</y>
       <width>258</width>
-      <height>222</height>
+      <height>701</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -67,6 +67,9 @@
      </item>
      <item>
       <widget class="QListWidget" name="listWidget"/>
+     </item>
+     <item>
+      <widget class="QTextEdit" name="logText"/>
      </item>
     </layout>
    </widget>
@@ -95,18 +98,12 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLineEdit" name="widthEdit"/>
-          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="heightLabel">
             <property name="text">
              <string>height</string>
             </property>
            </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="heightEdit"/>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="sizeLabel">
@@ -152,9 +149,6 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
-           <widget class="QLineEdit" name="frateEdit"/>
-          </item>
           <item row="6" column="0">
            <widget class="QLabel" name="seqLabel">
             <property name="text">
@@ -168,6 +162,23 @@
              <string>TextLabel</string>
             </property>
            </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="heightBox">
+            <property name="maximum">
+             <number>100000</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="widthBox">
+            <property name="maximum">
+             <number>100000</number>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QSpinBox" name="frateBox"/>
           </item>
          </layout>
         </item>

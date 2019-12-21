@@ -29,6 +29,9 @@ private slots:
 
     void on_prevButton_clicked();
 
+    void on_heightBox_valueChanged(int height);
+    void on_widthBox_valueChanged(int width);
+
 private:
     Ui::Player *ui;
 
