@@ -35,12 +35,12 @@ void Player::on_OpenButton_clicked()
     ui->depthBox->setValue(seq->getDepth());
 
     rgb = seq->nextFrame();
-    ui->scrollArea->display(rgb);
+    ui->scrollArea->setImg(rgb);
 }
 
 void Player::on_updateButton_clicked()
 {
-    ui->scrollArea->display(rgb);
+    ui->scrollArea->setImg(rgb);
 }
 
 void Player::openYuvFile()
@@ -54,13 +54,13 @@ void Player::openYuvFile()
 void Player::on_nextButton_clicked()
 {
     rgb = seq->nextFrame();
-    ui->scrollArea->display(rgb);
+    ui->scrollArea->setImg(rgb);
 }
 
 void Player::on_prevButton_clicked()
 {
     rgb = seq->prevFrame();
-    ui->scrollArea->display(rgb);
+    ui->scrollArea->setImg(rgb);
 }
 
 void Player::on_heightBox_valueChanged(int height)
@@ -74,7 +74,7 @@ void Player::on_heightBox_valueChanged(int height)
             ui->logText->append(QString("Height changed."));
         }
         rgb = seq->nextFrame();
-        ui->scrollArea->display(rgb);
+        ui->scrollArea->setImg(rgb);
     }
 }
 
@@ -89,7 +89,7 @@ void Player::on_widthBox_valueChanged(int width)
             ui->logText->append(QString("Width changed."));
         }
         rgb = seq->nextFrame();
-        ui->scrollArea->display(rgb);
+        ui->scrollArea->setImg(rgb);
     }
 }
 
@@ -104,6 +104,6 @@ void Player::on_depthBox_valueChanged(int depth)
             ui->logText->append(QString("Depth changed."));
         }
         rgb = seq->nextFrame();
-        ui->scrollArea->display(rgb);
+        ui->scrollArea->setImg(rgb);
     }
 }
