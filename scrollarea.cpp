@@ -103,12 +103,12 @@ void ScrollArea::mouseMoveEvent(QMouseEvent *event)
     if (event->buttons() & Qt::LeftButton) {
         QPoint delta = event->pos() - m_lastPos;
         QPoint pos = QPoint(m_viewport.x(), m_viewport.y()) - delta;
-        pos.setX(std::min(std::max(pos.x(), 0), m_img->width() - m_viewport.width()));
-        pos.setY(std::min(std::max(pos.y(), 0), m_img->height() - m_viewport.height()));
+        pos.setX(std::min(std::max(pos.x(), 0), std::max(m_img->width() - m_viewport.width(), 0)));
+        pos.setY(std::min(std::max(pos.y(), 0), std::max(m_img->height() - m_viewport.height(), 0)));
         m_viewport.moveTo(pos);
         m_lastPos = event->pos();
 
-        qDebug() << delta << m_viewport << m_scaledArea << m_scaledArea.contains(m_viewport) << endl;
+        qDebug() << delta << m_viewport;
 
         display();
     }
@@ -132,6 +132,12 @@ void ScrollArea::wheelEvent(QWheelEvent *event) {
         m_img->setScale(m_scale);
         qDebug() << "zoom out to level" << m_scale << "x" << exp2(m_scale) << endl;
     }
+
+    QPoint pos;
+    pos.setX(std::min(m_viewport.left(), std::max(m_img->width() - m_viewport.width(), 0)));
+    pos.setY(std::min(m_viewport.top(), std::max(m_img->height() - m_viewport.height(), 0)));
+    m_viewport.moveTo(pos);
+
     display();
 }
 
@@ -176,9 +182,12 @@ int ScaledImage::scale() const
     return m_scale;
 }
 
-QImage ScaledImage::get(QRect &rect)
+QImage ScaledImage::get(QRect area)
 {
-    rect = rect.intersected(m_img->rect());
+    qDebug() << "get sub area" << area << "in" << m_img->rect();
+    QRect rect = area.intersected(m_img->rect());
+    qDebug() << "get sub area" << rect << "in" << m_img->rect();
+
     if (m_scale == 0) {
         return m_img0->copy(rect);
     } else if (m_area.contains(rect)) {
