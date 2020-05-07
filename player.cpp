@@ -20,8 +20,7 @@ Player::Player(QWidget *parent)
 Player::~Player()
 {
     delete ui;
-    if (seq)
-    {
+    if (seq) {
         delete seq;
     }
 }

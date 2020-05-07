@@ -23,16 +23,13 @@ Sequence::~Sequence()
         delete f;
     }
 
-    for (int i = 0; i < 3; i++)
-    {
-        if (m_yuv[i])
-        {
+    for (int i = 0; i < 3; i++) {
+        if (m_yuv[i]) {
             free(m_yuv[i]);
         }
     }
 
-    if (m_rgb)
-    {
+    if (m_rgb) {
         delete m_rgb;
     }
 }

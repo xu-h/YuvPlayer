@@ -17,7 +17,7 @@ public:
     int scale() const;
     void setScale(int scale);
 
-    QImage get(QRect area);
+    QPixmap get(QRect area);
 
     int width() const;
     int height() const;
@@ -54,6 +54,9 @@ private:
 
     int m_scale;
     QRect m_viewport;
+
+    int m_lcu_size;
+    QPoint m_focusPos;
 
     void imgExtendHor(int left, int right);
     void imgExtendVer(int top, int bottom);

@@ -3,6 +3,7 @@
 #include <QtDebug>
 
 #include <QPixmap>
+#include <QPainter>
 #include <QMouseEvent>
 #include <QGridLayout>
 #include <QScrollBar>
@@ -18,6 +19,8 @@ ScrollArea::ScrollArea(QWidget *parent):
     m_img = NULL;
 
     m_viewport = QRect(0, 0, 0, 0);
+
+    m_lcu_size = 128;
 }
 
 ScrollArea::~ScrollArea()
@@ -72,7 +75,23 @@ void ScrollArea::imgExtendVer(int top, int bottom)
 void ScrollArea::display()
 {
     qDebug() << "display" << m_viewport << endl;
-    m_imageLabel->setPixmap(QPixmap::fromImage(m_img->get(m_viewport)));
+
+    QPixmap pixmap = m_img->get(m_viewport);
+    QPainter painter(&pixmap);
+    QPen pen(Qt::yellow, 2, Qt::SolidLine, Qt::SquareCap, Qt::RoundJoin);
+    painter.setPen(pen);
+
+    // draw lcu border
+    int scale = m_img->scale();
+    int lcu_size = m_lcu_size << scale;
+    int x = (m_focusPos.x() << scale);
+    int y = (m_focusPos.y() << scale);
+    qDebug() << "focus win" << x << y << "lcu size" << lcu_size << endl;
+    x -= (x % lcu_size) + m_viewport.x();
+    y -= (y % lcu_size) + m_viewport.y();
+    painter.drawRect(x, y, lcu_size, lcu_size);
+
+    m_imageLabel->setPixmap(pixmap);
 //    } else if (m_logScale < 0) {
 //        // downsample
 //        int scale = -m_logScale;
@@ -95,6 +114,10 @@ void ScrollArea::mousePressEvent(QMouseEvent *event) {
 
         // TODO move to other posiztion
         //m_viewport.setSize(viewport()->rect().size());
+    }  else if (event->buttons() & Qt::RightButton) {
+        m_focusPos = (event->pos() + m_viewport.topLeft()) / (1 << m_img->scale());
+        qDebug() << "focus on " << m_focusPos << endl;
+        display();
     }
 }
 
@@ -182,16 +205,18 @@ int ScaledImage::scale() const
     return m_scale;
 }
 
-QImage ScaledImage::get(QRect area)
+QPixmap ScaledImage::get(QRect area)
 {
-    qDebug() << "get sub area" << area << "in" << m_img->rect();
+    // qDebug() << "get sub area" << area << "in" << m_img->rect();
     QRect rect = area.intersected(m_img->rect());
     qDebug() << "get sub area" << rect << "in" << m_img->rect();
 
+    // scale viewpoint
+    QImage img;
     if (m_scale == 0) {
-        return m_img0->copy(rect);
+        img = m_img0->copy(rect);
     } else if (m_area.contains(rect)) {
-        return m_img->copy(rect);
+        img = m_img->copy(rect);
     } else {
         if (m_scale > 0) {
             int scale = m_scale;
@@ -200,7 +225,7 @@ QImage ScaledImage::get(QRect area)
                     m_img->setPixel(j, i, m_img0->pixel(j >> scale, i >> scale));
                 }
             }
-            return m_img->copy(rect);
+            img = m_img->copy(rect);
         } else {
             int scale = -m_scale;
             for (int i = rect.top(); i < rect.bottom(); i++) {
@@ -208,9 +233,12 @@ QImage ScaledImage::get(QRect area)
                     m_img->setPixel(j, i, m_img0->pixel(j << scale, i << scale));
                 }
             }
-            return m_img->copy(rect);
+            img = m_img->copy(rect);
         }
     }
+
+    QPixmap pixmap = QPixmap::fromImage(img);
+    return pixmap;
 }
 
 int ScaledImage::width() const
