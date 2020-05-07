@@ -49,29 +49,6 @@ void ScrollArea::setImg(QImage *img)
     display();
 }
 
-void ScrollArea::imgExtendHor(int left, int right)
-{
-//    if (m_logScale > 0) {
-//        int scale = m_logScale;
-//        for (int i = m_scaledArea.top(); i < m_scaledArea.bottom(); i++) {
-//            for (int j = left; j < right; j++) {
-//                m_scaledImg->setPixel(j, i, m_img->pixel(j >> scale, i >> scale));
-//            }
-//        }
-//        if (m_scaledArea.left() == left) {
-//            m_scaledArea.setRight(right);
-//        } else {
-//            m_scaledArea.setLeft(left);
-//        }
-//        qDebug() << "scaled area extend to" << m_scaledArea << endl;
-//    }
-}
-
-void ScrollArea::imgExtendVer(int top, int bottom)
-{
-
-}
-
 void ScrollArea::display()
 {
     qDebug() << "display" << m_viewport << endl;
@@ -92,19 +69,6 @@ void ScrollArea::display()
     painter.drawRect(x, y, lcu_size, lcu_size);
 
     m_imageLabel->setPixmap(pixmap);
-//    } else if (m_logScale < 0) {
-//        // downsample
-//        int scale = -m_logScale;
-//        for (int i = 0; i < m_scaledImg->height(); i++) {
-//            for (int j = 0; j < m_scaledImg->width(); j++) {
-//                m_scaledImg->setPixel(j, i, m_img->pixel(j << scale, i << scale));
-//            }
-//        }
-//        m_scaledArea = m_scaledImg->rect();
-//        m_imageLabel->setPixmap(QPixmap::fromImage(m_scaledImg->copy(m_viewport)));
-//    } else {
-//        m_imageLabel->setPixmap(QPixmap::fromImage(m_img->copy(m_viewport)));
-//    }
 }
 
 void ScrollArea::mousePressEvent(QMouseEvent *event) {

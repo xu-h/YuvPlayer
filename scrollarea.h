@@ -57,9 +57,6 @@ private:
 
     int m_lcu_size;
     QPoint m_focusPos;
-
-    void imgExtendHor(int left, int right);
-    void imgExtendVer(int top, int bottom);
 };
 
 #endif // SCROLLAREA_H
