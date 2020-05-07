@@ -76,12 +76,13 @@ void ScrollArea::mousePressEvent(QMouseEvent *event) {
         // TODO move to other posiztion
         //m_viewport.setSize(viewport()->rect().size());
     }  else if (event->buttons() & Qt::RightButton) {
+        // set focus window position
         int scale = m_img->scale();
         int x = (event->pos().x() + m_viewport.x()) >> scale;
         int y = (event->pos().y() + m_viewport.y()) >> scale;
         m_focusPos.setX(x - (x % m_lcu_size));
         m_focusPos.setY(y - (y % m_lcu_size));
-        qDebug() << "focus on " << m_focusPos << endl;
+        qDebug() << "focus on" << m_focusPos << endl;
         display();
     }
 }
@@ -89,6 +90,7 @@ void ScrollArea::mousePressEvent(QMouseEvent *event) {
 void ScrollArea::mouseMoveEvent(QMouseEvent *event)
 {
     if (event->buttons() & Qt::LeftButton) {
+        // update viewport
         QPoint delta = event->pos() - m_lastPos;
         QPoint pos = QPoint(m_viewport.x(), m_viewport.y()) - delta;
         pos.setX(std::min(std::max(pos.x(), 0), std::max(m_img->width() - m_viewport.width(), 0)));
@@ -111,20 +113,19 @@ void ScrollArea::mouseReleaseEvent(QMouseEvent *event)
 }
 
 void ScrollArea::wheelEvent(QWheelEvent *event) {
+    QPoint pos = m_viewport.center();
     if (event->delta() > 0) {
         m_scale += 1;
+        pos *= 2;
         m_img->setScale(m_scale);
         qDebug() << "zoom in to level" << m_scale << "x" << exp2(m_scale) << endl;
     } else if (event->delta() < 0){
         m_scale -= 1;
+        pos /= 2;
         m_img->setScale(m_scale);
         qDebug() << "zoom out to level" << m_scale << "x" << exp2(m_scale) << endl;
     }
-
-    QPoint pos;
-    pos.setX(std::min(m_viewport.left(), std::max(m_img->width() - m_viewport.width(), 0)));
-    pos.setY(std::min(m_viewport.top(), std::max(m_img->height() - m_viewport.height(), 0)));
-    m_viewport.moveTo(pos);
+    m_viewport.moveCenter(pos);
 
     display();
 }
