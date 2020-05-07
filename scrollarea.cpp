@@ -61,11 +61,8 @@ void ScrollArea::display()
     // draw lcu border
     int scale = m_img->scale();
     int lcu_size = m_lcu_size << scale;
-    int x = (m_focusPos.x() << scale);
-    int y = (m_focusPos.y() << scale);
-    qDebug() << "focus win" << x << y << "lcu size" << lcu_size << endl;
-    x -= (x % lcu_size) + m_viewport.x();
-    y -= (y % lcu_size) + m_viewport.y();
+    int x = (m_focusPos.x() << scale) - m_viewport.x();
+    int y = (m_focusPos.y() << scale) - m_viewport.y();
     painter.drawRect(x, y, lcu_size, lcu_size);
 
     m_imageLabel->setPixmap(pixmap);
@@ -79,7 +76,11 @@ void ScrollArea::mousePressEvent(QMouseEvent *event) {
         // TODO move to other posiztion
         //m_viewport.setSize(viewport()->rect().size());
     }  else if (event->buttons() & Qt::RightButton) {
-        m_focusPos = (event->pos() + m_viewport.topLeft()) / (1 << m_img->scale());
+        int scale = m_img->scale();
+        int x = (event->pos().x() + m_viewport.x()) >> scale;
+        int y = (event->pos().y() + m_viewport.y()) >> scale;
+        m_focusPos.setX(x - (x % m_lcu_size));
+        m_focusPos.setY(y - (y % m_lcu_size));
         qDebug() << "focus on " << m_focusPos << endl;
         display();
     }
