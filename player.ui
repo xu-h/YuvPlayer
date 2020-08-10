@@ -90,7 +90,7 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="infoGroup">
        <property name="title">
         <string>Info</string>
        </property>
@@ -104,10 +104,24 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="widthBox">
+            <property name="maximum">
+             <number>100000</number>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="heightLabel">
             <property name="text">
              <string>height</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="heightBox">
+            <property name="maximum">
+             <number>100000</number>
             </property>
            </widget>
           </item>
@@ -158,6 +172,9 @@
             </property>
            </widget>
           </item>
+          <item row="5" column="1">
+           <widget class="QSpinBox" name="frateBox"/>
+          </item>
           <item row="6" column="0">
            <widget class="QLabel" name="seqLabel">
             <property name="text">
@@ -172,47 +189,30 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="heightBox">
-            <property name="maximum">
-             <number>100000</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="widthBox">
-            <property name="maximum">
-             <number>100000</number>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QSpinBox" name="frateBox"/>
-          </item>
          </layout>
         </item>
        </layout>
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox_2">
+      <widget class="QGroupBox" name="controlGroup">
        <property name="title">
         <string>Control</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QPushButton" name="playButton">
-            <property name="text">
-             <string>play</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
            <widget class="QPushButton" name="stopButton">
             <property name="text">
              <string>stop</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="playButton">
+            <property name="text">
+             <string>play</string>
             </property>
            </widget>
           </item>
@@ -230,28 +230,8 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="gotoButton">
-            <property name="text">
-             <string>goto frame</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="gotoEdit"/>
-          </item>
-          <item row="3" column="0" colspan="2">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
           <item row="4" column="0" colspan="2">
-           <widget class="QSlider" name="horizontalSlider">
+           <widget class="QSlider" name="progressSlider">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -260,6 +240,62 @@
             </property>
             <property name="tickInterval">
              <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLineEdit" name="gotoEdit">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>5</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="cursorPosition">
+               <number>0</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="slantLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>1</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>/</string>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="maxFrameLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>5</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="gotoButton">
+            <property name="text">
+             <string>goto frame</string>
             </property>
            </widget>
           </item>
@@ -277,7 +313,7 @@
      <x>0</x>
      <y>0</y>
      <width>1317</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

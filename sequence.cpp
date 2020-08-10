@@ -191,6 +191,7 @@ QImage* Sequence::nextFrame()
     f->read(reinterpret_cast<char *>(m_yuv[0]), m_sizeL);
     f->read(reinterpret_cast<char *>(m_yuv[1]), m_sizeC);
     f->read(reinterpret_cast<char *>(m_yuv[2]), m_sizeC);
+    m_curFrame++;
 
     convertRGB();
 
@@ -203,6 +204,7 @@ QImage* Sequence::prevFrame()
     f->read(reinterpret_cast<char *>(m_yuv[0]), m_sizeL);
     f->read(reinterpret_cast<char *>(m_yuv[1]), m_sizeC);
     f->read(reinterpret_cast<char *>(m_yuv[2]), m_sizeC);
+    m_curFrame--;
 
     convertRGB();
 
@@ -253,3 +255,12 @@ void Sequence::setFrate(int frate)
     config(m_width, m_height, m_depth, frate);
 }
 
+int Sequence::getCurFrame()
+{
+    return m_curFrame;
+}
+
+int Sequence::getMaxFrame()
+{
+    return m_maxFrame;
+}

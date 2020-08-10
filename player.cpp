@@ -48,9 +48,9 @@ void Player::on_OpenButton_clicked()
     ui->heightBox->setValue(seq->getHeight());
     ui->depthBox->setValue(seq->getDepth());
     ui->frateBox->setValue(seq->getFrate());
+    ui->maxFrameLabel->setText(QString::number(seq->getMaxFrame()));
 
-    rgb = seq->nextFrame();
-    ui->scrollArea->setImg(rgb);
+    on_nextButton_clicked();
 }
 
 void Player::on_updateButton_clicked()
@@ -61,12 +61,14 @@ void Player::on_updateButton_clicked()
 void Player::on_nextButton_clicked()
 {
     rgb = seq->nextFrame();
+    ui->gotoEdit->setText(QString::number(seq->getCurFrame()));
     ui->scrollArea->setImg(rgb);
 }
 
 void Player::on_prevButton_clicked()
 {
     rgb = seq->prevFrame();
+    ui->gotoEdit->setText(QString(seq->getCurFrame()));
     ui->scrollArea->setImg(rgb);
 }
 

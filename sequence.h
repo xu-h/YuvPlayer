@@ -50,6 +50,9 @@ public:
     int getFrate() const;
     void setFrate(int frate);
 
+    int getMaxFrame();
+    int getCurFrame();
+
 private:
     // base info
     int m_width;
