@@ -34,14 +34,22 @@ private slots:
 
     void on_depthBox_valueChanged(int arg1);
 
+    void on_frateBox_valueChanged(int arg1);
+
+    void on_playButton_clicked();
+
+    void on_stopButton_clicked();
+
 private:
     Ui::Player *ui;
 
     Sequence *seq;
 
     QImage *rgb;
+    QTimer *timer;
 
     QLabel *imageLabel;
+
     void openYuvFile();
 };
 #endif // PLAYER_H

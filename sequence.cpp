@@ -71,9 +71,9 @@ void Sequence::parseName(QString name)
     config(width, height, depth, frameRate);
 }
 
-SeqError Sequence::config(int width, int height, int depth, int frameRate=0)
+SeqError Sequence::config(int width, int height, int depth, int frate=0)
 {
-    if (width > 0 && height > 0) {
+    if (width > 0 && height > 0 && (width != m_width || height != m_height)) {
         // TODO support other chroma format
         m_depth = depth;
         int pixBytes = (depth + 7) >> 3;
@@ -112,10 +112,10 @@ SeqError Sequence::config(int width, int height, int depth, int frameRate=0)
         }
     }
 
-    if (frameRate > 0) {
-        m_frameRate = frameRate;
+    if (frate > 0 && frate != m_frate) {
+        m_frate = frate;
     }
-    qDebug() << "seq init: width" << m_width << "height" << m_height << "depth" << m_depth << "frate" << m_frameRate << endl;
+    qDebug() << "seq init: width" << m_width << "height" << m_height << "depth" << m_depth << "frate" << m_frate << endl;
 
     return SEQ_SUCCESS;
 }
@@ -240,5 +240,16 @@ SeqError Sequence::setDepth(int depth)
 {
     m_depth = depth;
     return config(m_width, m_height, m_depth);
+}
+
+int Sequence::getFrate() const
+{
+    return m_frate;
+}
+
+void Sequence::setFrate(int frate)
+{
+    m_frate = frate;
+    config(m_width, m_height, m_depth, frate);
 }
 

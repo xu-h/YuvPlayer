@@ -6,6 +6,7 @@
 
 #include <QFile>
 #include <QPixmap>
+#include <QTimer>
 
 Player::Player(QWidget *parent)
     : QMainWindow(parent)
@@ -15,6 +16,8 @@ Player::Player(QWidget *parent)
 
     ui->scrollArea->init();
 //    imageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+
+    timer = new QTimer(this);
 }
 
 Player::~Player()
@@ -23,6 +26,18 @@ Player::~Player()
     if (seq) {
         delete seq;
     }
+    if (timer) {
+        timer->stop();
+        delete timer;
+    }
+}
+
+void Player::openYuvFile()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("open YUV"), QString("F:/seq/vvc"));
+    ui->seqNameLabel->setText(fileName);
+
+    seq = new Sequence(fileName);
 }
 
 void Player::on_OpenButton_clicked()
@@ -32,6 +47,7 @@ void Player::on_OpenButton_clicked()
     ui->widthBox->setValue(seq->getWidth());
     ui->heightBox->setValue(seq->getHeight());
     ui->depthBox->setValue(seq->getDepth());
+    ui->frateBox->setValue(seq->getFrate());
 
     rgb = seq->nextFrame();
     ui->scrollArea->setImg(rgb);
@@ -40,14 +56,6 @@ void Player::on_OpenButton_clicked()
 void Player::on_updateButton_clicked()
 {
     ui->scrollArea->setImg(rgb);
-}
-
-void Player::openYuvFile()
-{
-    QString fileName = QFileDialog::getOpenFileName(this, tr("open YUV"), QString("F:/seq/vvc"));
-    ui->seqNameLabel->setText(fileName);
-
-    seq = new Sequence(fileName);
 }
 
 void Player::on_nextButton_clicked()
@@ -60,6 +68,18 @@ void Player::on_prevButton_clicked()
 {
     rgb = seq->prevFrame();
     ui->scrollArea->setImg(rgb);
+}
+
+void Player::on_playButton_clicked()
+{
+    connect(timer, &QTimer::timeout, this, &Player::on_nextButton_clicked);
+    int interval = int(1000 / seq->getFrate());
+    timer->start(interval);
+}
+
+void Player::on_stopButton_clicked()
+{
+    timer->stop();
 }
 
 void Player::on_heightBox_valueChanged(int height)
@@ -104,5 +124,13 @@ void Player::on_depthBox_valueChanged(int depth)
         }
         rgb = seq->nextFrame();
         ui->scrollArea->setImg(rgb);
+    }
+}
+
+void Player::on_frateBox_valueChanged(int frate)
+{
+    if (frate != seq->getFrate()) {
+        qDebug() << "set frate from" << seq->getFrate() << "to" << frate << endl;
+        seq->setFrate(frate);
     }
 }

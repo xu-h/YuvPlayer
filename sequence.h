@@ -47,21 +47,23 @@ public:
     SeqError setHeight(int height);
     int getDepth() const;
     SeqError setDepth(int depth);
+    int getFrate() const;
+    void setFrate(int frate);
 
 private:
     // base info
     int m_width;
     int m_height;
     int m_depth;
-    int m_frameRate;
+    int m_frate;
     ColorCvtType m_colorType;
 
     // derive info
     int m_widthC;
     int m_heightC;
-    int m_size;     // frame byte size
-    int m_sizeL;    // luma byte size
-    int m_sizeC;    // chroma byte size
+    int m_size;      // frame byte size
+    int m_sizeL;     // luma byte size
+    int m_sizeC;     // chroma byte size
 
     // control
     int m_curFrame;
