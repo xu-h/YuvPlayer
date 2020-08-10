@@ -36,7 +36,7 @@ class Sequence
 public:
     Sequence(QString filename);
     ~Sequence();
-    SeqError config(int width, int height, int depth);
+    SeqError config(int width, int height, int depth, int frameRate);
     QImage* updateFrame();
     QImage* nextFrame();
     QImage* prevFrame();
@@ -53,6 +53,7 @@ private:
     int m_width;
     int m_height;
     int m_depth;
+    int m_frameRate;
     ColorCvtType m_colorType;
 
     // derive info

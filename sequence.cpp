@@ -38,7 +38,7 @@ void Sequence::parseName(QString name)
 {
     QStringList info = name.split('_');
 
-    int width = 0, height = 0, depth = 8;
+    int width = 0, height = 0, depth = 8, frameRate = 0;
     bool ok;
     // TODO parse chroma format
     for (int i = 0; i < info.size(); i++) {
@@ -60,16 +60,20 @@ void Sequence::parseName(QString name)
             if (!ok) {
                 depth = 8;
             }
+        } else {
+            frameRate = attr.toInt(&ok);
+            if (!ok) {
+                frameRate = 0;
+            }
         }
     }
 
-    config(width, height, depth);
+    config(width, height, depth, frameRate);
 }
 
-SeqError Sequence::config(int width, int height, int depth)
+SeqError Sequence::config(int width, int height, int depth, int frameRate=0)
 {
     if (width > 0 && height > 0) {
-        qDebug() << "seq init: width" << width << "height" << height << "depth" << depth << endl;
         // TODO support other chroma format
         m_depth = depth;
         int pixBytes = (depth + 7) >> 3;
@@ -107,6 +111,12 @@ SeqError Sequence::config(int width, int height, int depth)
             return SEQ_INVALID_DEPTH;
         }
     }
+
+    if (frameRate > 0) {
+        m_frameRate = frameRate;
+    }
+    qDebug() << "seq init: width" << m_width << "height" << m_height << "depth" << m_depth << "frate" << m_frameRate << endl;
+
     return SEQ_SUCCESS;
 }
 
