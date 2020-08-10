@@ -40,6 +40,7 @@ public:
     QImage* updateFrame();
     QImage* nextFrame();
     QImage* prevFrame();
+    QImage* gotoFrame(int frame);
 
     int  getWidth() const;
     SeqError setWidth(int width);

@@ -211,6 +211,17 @@ QImage* Sequence::prevFrame()
     return m_rgb;
 }
 
+QImage* Sequence::gotoFrame(int frame)
+{
+    if (frame > 0 && frame < m_maxFrame) {
+        m_curFrame = frame - 1;
+        f->seek(m_size * (m_curFrame - 1));
+        return nextFrame();
+    } else {
+        return nullptr;
+    }
+}
+
 int Sequence::getWidth() const
 {
     return m_width;

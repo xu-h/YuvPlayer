@@ -84,6 +84,20 @@ void Player::on_stopButton_clicked()
     timer->stop();
 }
 
+void Player::on_gotoButton_clicked()
+{
+    bool ok;
+    int frame = ui->gotoEdit->text().toInt(&ok);
+    if (ok) {
+        QImage *newRgb = seq->gotoFrame(frame);
+        if (newRgb) {
+            rgb = newRgb;
+            ui->gotoEdit->setText(QString::number(seq->getCurFrame()));
+            ui->scrollArea->setImg(rgb);
+        }
+    }
+}
+
 void Player::on_heightBox_valueChanged(int height)
 {
     if (height != seq->getHeight()) {

@@ -40,6 +40,8 @@ private slots:
 
     void on_stopButton_clicked();
 
+    void on_gotoButton_clicked();
+
 private:
     Ui::Player *ui;
 
